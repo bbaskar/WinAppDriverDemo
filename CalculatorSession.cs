@@ -7,12 +7,12 @@ namespace WinAppDriverDemo
 {
     public class CalculatorSession
     {
-        // Note: append /wd/hub to the URL if you're directing the test at Appium
-        private const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723";
+        protected static WindowsDriver<WindowsElement> session;
 
         private const string CalculatorAppId = "Microsoft.WindowsCalculator_8wekyb3d8bbwe!App";
 
-        protected static WindowsDriver<WindowsElement> session;
+        // Note: append /wd/hub to the URL if you're directing the test at Appium
+        private const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723";
 
         public static void Setup(TestContext context)
         {

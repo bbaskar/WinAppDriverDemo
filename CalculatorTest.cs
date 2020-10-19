@@ -19,8 +19,14 @@ namespace WinAppDriverDemo
     [TestClass]
     public class CalculatorTest : CalculatorSession
     {
-        private static WindowsElement header;
         private static WindowsElement calculatorResult;
+        private static WindowsElement header;
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            TearDown();
+        }
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
@@ -40,6 +46,7 @@ namespace WinAppDriverDemo
 
             // Locate the calculatorResult element
             calculatorResult = session.FindElementByAccessibilityId("CalculatorResults");
+
             Assert.IsNotNull(calculatorResult);
         }
 
@@ -47,56 +54,14 @@ namespace WinAppDriverDemo
         public void Clear()
         {
             session.FindElementByName("Clear").Click();
-
             Assert.AreEqual("0", GetCalculatorResultText());
         }
 
-        [TestMethod]
-        public void StandardCalculatorTestMethod()
+        [TestCleanup]
+        public void ClearEntry()
         {
-            // Ensure that calculator is in standard mode
-            if (!header.Text.Equals("Standard", StringComparison.OrdinalIgnoreCase))
-            {
-                session.FindElementByAccessibilityId("TogglePaneButton").Click();
-                Thread.Sleep(TimeSpan.FromSeconds(1));
-                var splitViewPane = session.FindElementByClassName("SplitViewPane");
-                splitViewPane.FindElementByName("Standard Calculator").Click();
-                Thread.Sleep(TimeSpan.FromSeconds(1));
-                Assert.IsTrue(header.Text.Equals("Standard", StringComparison.OrdinalIgnoreCase));
-            }
-
-            // To calculate value of Pi, Find the buttons by their accessibility ids and click them.
-            session.FindElementByAccessibilityId("num2Button").Click();
-            session.FindElementByAccessibilityId("num2Button").Click();
-            session.FindElementByAccessibilityId("divideButton").Click();
-            session.FindElementByAccessibilityId("num7Button").Click();
-            session.FindElementByAccessibilityId("equalButton").Click();
-
-            Decimal expectedResult = Math.Round(Convert.ToDecimal(Math.PI), 2);
-            Decimal actualResult = Math.Round(Convert.ToDecimal(GetCalculatorResultText()), 2);
-            Assert.AreEqual(expectedResult, actualResult);
-        }
-
-        [TestMethod]
-        public void ScientificCalculatorTestMethod()
-        {
-            // Ensure that calculator is in standard mode
-            if (!header.Text.Equals("Scientific", StringComparison.OrdinalIgnoreCase))
-            {
-                session.FindElementByAccessibilityId("TogglePaneButton").Click();
-                Thread.Sleep(TimeSpan.FromSeconds(1));
-                var splitViewPane = session.FindElementByClassName("SplitViewPane");
-                splitViewPane.FindElementByName("Scientific Calculator").Click();
-                Thread.Sleep(TimeSpan.FromSeconds(1));
-                Assert.IsTrue(header.Text.Equals("Scientific", StringComparison.OrdinalIgnoreCase));
-            }
-
-            // To calculate value of Pi, Find the buttons by their names using XPath and click them.
-            session.FindElementByXPath("//Button[@Name='Pi']").Click();
-
-            Decimal expectedResult = Math.Round(Convert.ToDecimal(Math.PI), 9);
-            Decimal actualResult = Math.Round(Convert.ToDecimal(GetCalculatorResultText()), 9);
-            Assert.AreEqual(expectedResult, actualResult);
+            session.FindElementByAccessibilityId("clearEntryButton").Click();
+            Assert.AreEqual("0", GetCalculatorResultText());
         }
 
         [TestMethod]
@@ -126,18 +91,54 @@ namespace WinAppDriverDemo
             Assert.AreEqual("30", GetCalculatorResultText());
         }
 
-        [TestCleanup]
-        public void ClearEntry()
+        [TestMethod]
+        public void ScientificCalculatorTestMethod()
         {
-            session.FindElementByAccessibilityId("clearEntryButton").Click();
+            // Ensure that calculator is in standard mode
+            if (!header.Text.Equals("Scientific", StringComparison.OrdinalIgnoreCase))
+            {
+                session.FindElementByAccessibilityId("TogglePaneButton").Click();
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+                var splitViewPane = session.FindElementByClassName("SplitViewPane");
+                splitViewPane.FindElementByName("Scientific Calculator").Click();
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+                Assert.IsTrue(header.Text.Equals("Scientific", StringComparison.OrdinalIgnoreCase));
+            }
 
-            Assert.AreEqual("0", GetCalculatorResultText());
+            // To calculate value of Pi, Find the buttons by their names using XPath and click them.
+            session.FindElementByXPath("//Button[@Name='Pi']").Click();
+
+            Decimal expectedResult = Math.Round(Convert.ToDecimal(Math.PI), 9);
+            Decimal actualResult = Math.Round(Convert.ToDecimal(GetCalculatorResultText()), 9);
+
+            Assert.AreEqual(expectedResult, actualResult);
         }
 
-        [ClassCleanup]
-        public static void ClassCleanup()
+        [TestMethod]
+        public void StandardCalculatorTestMethod()
         {
-            TearDown();
+            // Ensure that calculator is in standard mode
+            if (!header.Text.Equals("Standard", StringComparison.OrdinalIgnoreCase))
+            {
+                session.FindElementByAccessibilityId("TogglePaneButton").Click();
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+                var splitViewPane = session.FindElementByClassName("SplitViewPane");
+                splitViewPane.FindElementByName("Standard Calculator").Click();
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+                Assert.IsTrue(header.Text.Equals("Standard", StringComparison.OrdinalIgnoreCase));
+            }
+
+            // To calculate value of Pi, Find the buttons by their accessibility ids and click them.
+            session.FindElementByAccessibilityId("num2Button").Click();
+            session.FindElementByAccessibilityId("num2Button").Click();
+            session.FindElementByAccessibilityId("divideButton").Click();
+            session.FindElementByAccessibilityId("num7Button").Click();
+            session.FindElementByAccessibilityId("equalButton").Click();
+
+            Decimal expectedResult = Math.Round(Convert.ToDecimal(Math.PI), 2);
+            Decimal actualResult = Math.Round(Convert.ToDecimal(GetCalculatorResultText()), 2);
+
+            Assert.AreEqual(expectedResult, actualResult);
         }
 
         private string GetCalculatorResultText()
