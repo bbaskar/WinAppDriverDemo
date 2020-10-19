@@ -47,6 +47,7 @@ namespace WinAppDriverDemo
         public void Clear()
         {
             session.FindElementByName("Clear").Click();
+
             Assert.AreEqual("0", GetCalculatorResultText());
         }
 
@@ -123,7 +124,14 @@ namespace WinAppDriverDemo
             session.FindElementByAccessibilityId("decimalButton").Click();
 
             Assert.AreEqual("30", GetCalculatorResultText());
+        }
+
+        [TestCleanup]
+        public void ClearEntry()
+        {
             session.FindElementByAccessibilityId("clearEntryButton").Click();
+
+            Assert.AreEqual("0", GetCalculatorResultText());
         }
 
         [ClassCleanup]
